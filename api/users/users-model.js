@@ -12,7 +12,6 @@ async function add(user) {
   const [newUser] = await db("users").insert(user, [
     "user_id",
     "username",
-    "password",
     "first_name",
   ]);
   return newUser;
