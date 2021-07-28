@@ -4,6 +4,10 @@ function findById(user_id) {
   return db("users").where("user_id", user_id).first();
 }
 
+function findBy(filter) {
+  return db("users").where(filter);
+}
+
 async function add(user) {
   const [newUser] = await db("users").insert(user, [
     "user_id",
@@ -16,5 +20,6 @@ async function add(user) {
 
 module.exports = {
   findById,
+  findBy,
   add,
 };
