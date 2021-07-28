@@ -28,7 +28,22 @@ function getUserInvites(user_id) {
     .andWhere("pi.attending", false);
 }
 
+function getPotluckById(potluck_id) {
+  return db("potlucks as p")
+    .join("users as u", "p.organizer_id", "u.user_id")
+    .select(
+      "p.potluck_id",
+      "p.potluck_name",
+      "p.potluck_date",
+      "p.potluck_time",
+      "p.potluck_location",
+      "u.username as organizer"
+    )
+    .where("p.potluck_id", potluck_id);
+}
+
 module.exports = {
   getUserAttending,
   getUserInvites,
+  getPotluckById,
 };
