@@ -11,6 +11,8 @@ exports.up = async (knex) => {
     .createTable("potlucks", (table) => {
       table.increments("potluck_id");
       table.string("potluck_name", 200).notNullable();
+      table.string("potluck_date").notNullable();
+      table.string("potluck_time").notNullable();
       table
         .integer("organizer_id")
         .unsigned()
