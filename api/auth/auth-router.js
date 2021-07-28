@@ -2,9 +2,9 @@ const bcrypt = require("bcryptjs");
 const router = require("express").Router();
 const User = require("../users/users-model");
 const tokenBuilder = require("./token-builder");
-const { checkUsernameExists } = require("../middleware/middleware");
+const { checkRequiredFields, checkUsernameExists } = require("../middleware/middleware");
 
-router.post("/register", async (req, res, next) => {
+router.post("/register", checkRequiredFields, async (req, res, next) => {
   let user = req.body;
   const hash = bcrypt.hashSync(user.password, 8);
 
@@ -18,7 +18,7 @@ router.post("/register", async (req, res, next) => {
   }
 });
 
-router.post("/login", checkUsernameExists, async (req, res, next) => {
+router.post("/login", checkRequiredFields, checkUsernameExists, async (req, res, next) => {
   const { password } = req.body;
   const { user } = req;
 
