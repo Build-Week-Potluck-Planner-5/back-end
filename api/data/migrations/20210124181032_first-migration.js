@@ -23,8 +23,8 @@ exports.up = async (knex) => {
         .onUpdate("RESTRICT");
       table.timestamps(false, true);
     })
-    .createTable("potluck_attendees", (table) => {
-      table.increments("potluck_attendee_id");
+    .createTable("potluck_invites", (table) => {
+      table.increments("potluck_invite_id");
       table
         .integer("potluck_id")
         .unsigned()
@@ -41,6 +41,7 @@ exports.up = async (knex) => {
         .inTable("users")
         .onDelete("RESTRICT")
         .onUpdate("RESTRICT");
+      table.boolean("attending").defaultTo(false);
       table.timestamps(false, true);
     })
     .createTable("foods", (table) => {
@@ -81,7 +82,7 @@ exports.down = async (knex) => {
   await knex.schema
     .dropTableIfExists("potluck_food_users")
     .dropTableIfExists("foods")
-    .dropTableIfExists("potluck_attendees")
+    .dropTableIfExists("potluck_invites")
     .dropTableIfExists("potlucks")
     .dropTableIfExists("users");
 };

@@ -1,8 +1,9 @@
 exports.seed = function (knex) {
-  return knex("potluck_attendees").insert([
+  return knex("potluck_invites").insert([
     {
       potluck_id: 1,
       user_id: 1,
+      attending: true,
     },
     {
       potluck_id: 1,
