@@ -15,14 +15,13 @@ server.use("/api/auth", authRouter);
 // server.use("/api/users", usersRouter);
 // server.use("/api/potlucks", potlucksRouter);
 
-server.use("*", (req, res, next) => {
+server.use("*", (req, res, next) => {//eslint-disable-line
   res.status(404).json({
     message: "not found, sorry!",
   });
 });
 
-server.use((err, req, res, next) => {
-  //eslint-disable-line
+server.use((err, req, res, next) => { //eslint-disable-line
   res.status(500).json({
     message: err.message,
     stack: err.stack,

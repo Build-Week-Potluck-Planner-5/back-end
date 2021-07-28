@@ -4,7 +4,7 @@ const User = require("../users/users-model");
 const tokenBuilder = require("./token-builder");
 const { checkRequiredFields, checkUsernameExists } = require("../middleware/middleware");
 
-router.post("/register", checkRequiredFields, async (req, res, next) => {
+router.post("/register", checkRequiredFields, checkUsernameExists, async (req, res, next) => {
   let user = req.body;
   const hash = bcrypt.hashSync(user.password, 8);
 
