@@ -15,7 +15,7 @@ server.use("/api/auth", authRouter);
 // server.use("/api/users", usersRouter);
 // server.use("/api/potlucks", potlucksRouter);
 
-server.use("*", (req, res, next) => {//eslint-disable-line
+server.use("*", (req, res, next) => { //eslint-disable-line
   res.status(404).json({
     message: "not found, sorry!",
   });
