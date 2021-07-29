@@ -90,46 +90,37 @@ async function addPotluck(potluck) {
     "potluck_time",
     "potluck_location",
   ]);
-  console.log(newPotluck);
   let newPotluckResult = newPotluck;
   let foodInsert = [];
 
   if (potluck.food.length > 0) {
-    for (const food of potluck.food) {
+    for (const el of potluck.food) {
+      const food = el.trim();
       let newFood = {
         food_id: null,
         food_name: "",
       };
       const [findFood] = await db("foods").where("food_name", food);
-      console.log('findFood', findFood);
 
       if (findFood) {
         newFood.food_id = findFood.food_id;
         newFood.food_name = findFood.food_name;
-        console.log('findFood', findFood)
       } else {
         const [addFood] = await db("foods").insert({food_name: food}, [
           "food_id",
           "food_name",
         ]);
-        console.log('addFood', addFood);
         
         newFood.food_id = addFood.food_id;
         newFood.food_name = addFood.food_name;
       }
-      console.log('food_id', newFood.food_id);
 
-      const potluckFoodUser = await db("potluck_food_users").insert(
+      await db("potluck_food_users").insert(
         { potluck_id: newPotluck.potluck_id, food_id: newFood.food_id },
         ["potluck_id", "food_id"]
       );
-      console.log(potluckFoodUser);
 
       foodInsert.push(newFood.food_name);
-      // if food isn't in food table, add it to the food table and return the new object
-      // if food is in the food table, then grab the food id
-      // insert a new record in potluck_food_users with the newPotluck.potluck_id and the newFood.food_id
-      // push the name of the food to the foodInsert array
     }
     newPotluckResult = {
       ...newPotluckResult,
