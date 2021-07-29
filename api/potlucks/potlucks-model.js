@@ -28,6 +28,12 @@ function getUserInvites(user_id) {
     .andWhere("pi.attending", false);
 }
 
+async function findPotluckById(potluck_id) {
+  const potluck = await db('potlucks')
+    .where('potluck_id', potluck_id)
+  return potluck;
+}
+
 async function getPotluck(potluck_id) {
 
   const foodRows = await db("potlucks as p")
@@ -212,6 +218,7 @@ async function addFood(food) {
 module.exports = {
   getUserPotlucks,
   getUserInvites,
+  findPotluckById,
   getPotluck,
   addPotluck,
   guestUpdateFood,
