@@ -1,13 +1,12 @@
 const router = require("express").Router();
 const Potluck = require("./potlucks-model");
-const { checkPotluckExists } = require('../middleware/middleware');
+const { checkPotluckExists } = require("../middleware/middleware");
 
 router.post("/", async (req, res, next) => {
-  
   const potluck = {
     ...req.body,
-    organizer_id: req.decodedJWT.subject
-  }
+    organizer_id: req.decodedJWT.subject,
+  };
 
   try {
     const newPotluck = await Potluck.addPotluck(potluck);
@@ -109,5 +108,14 @@ router.get("/:potluck_id", checkPotluckExists, async (req, res, next) => {
 //     next(err);
 //   }
 // })
+
+router.get("/foods", async (req, res, next) => {
+  try {
+    const foodList = await Potluck.getAllFoods();
+    res.status(200).json(foodList);
+  } catch (err) {
+    next(err);
+  }
+}); 
 
 module.exports = router;
