@@ -28,8 +28,13 @@ function getUserInvites(user_id) {
     .andWhere("pi.attending", false);
 }
 
-async function getPotluckFood(potluck_id) {
-  const rows = await db("potlucks as p")
+async function findPotluckById(potluck_id) {
+  const potluck = await db("potlucks").where("potluck_id", potluck_id);
+  return potluck;
+}
+
+async function getPotluck(potluck_id) {
+  const foodRows = await db("potlucks as p")
     .join("users as u", "p.organizer_id", "u.user_id")
     .leftJoin("potluck_food_users as pfu", "pfu.potluck_id", "p.potluck_id")
     .leftJoin("foods as f", "pfu.food_id", "f.food_id")
@@ -49,7 +54,7 @@ async function getPotluckFood(potluck_id) {
     )
     .where("p.potluck_id", potluck_id);
 
-  const potluck = rows[0];
+  const potluck = foodRows[0];
 
   let result = {
     potluck_id: potluck.potluck_id,
@@ -60,16 +65,25 @@ async function getPotluckFood(potluck_id) {
     organizer_id: potluck.organizer_id,
     organizer: potluck.organizer,
     food: [],
+    invites: [],
   };
-
-  rows.forEach((el) => {
-    result.food.push({
-      food_id: el.food_id,
-      food_name: el.food_name,
-      user_id: el.user_id,
-      username: el.username,
-    });
+  foodRows.forEach((el) => {
+    if (el.food_id) {
+      result.food.push({
+        food_id: el.food_id,
+        food_name: el.food_name,
+        user_id: el.user_id,
+        username: el.username,
+      });
+    }
   });
+
+  const guests = await db("potluck_invites as pu")
+    .join("users as u", "pu.user_id", "u.user_id")
+    .select("pu.user_id", "u.username", "pu.attending")
+    .where("pu.potluck_id", potluck_id);
+  result.invites = guests;
+
   return result;
 }
 
@@ -98,26 +112,26 @@ async function addPotluck(potluck) {
     if (potluck.invites.length > 0) {
       for (const user of potluck.invites) {
         const [findUser] = await db("users").where("user_id", user);
-  
+
         await db("potluck_invites").insert(
           { potluck_id: newPotluck.potluck_id, user_id: findUser.user_id },
           ["potluck_id", "user_id"]
         );
-  
+
         inviteInsert.push(findUser.username);
       }
       newPotluckResult = {
         ...newPotluckResult,
         invites: inviteInsert,
       };
-      console.log('look here')
+      console.log("look here");
     } else {
       newPotluckResult = {
         ...newPotluckResult,
-        invites: []
-      }
+        invites: [],
+      };
     }
-  }
+  };
 
   if (potluck.food.length > 0) {
     for (const el of potluck.food) {
@@ -132,11 +146,11 @@ async function addPotluck(potluck) {
         newFood.food_id = findFood.food_id;
         newFood.food_name = findFood.food_name;
       } else {
-        const [addFood] = await db("foods").insert({food_name: food}, [
+        const [addFood] = await db("foods").insert({ food_name: food }, [
           "food_id",
           "food_name",
         ]);
-        
+
         newFood.food_id = addFood.food_id;
         newFood.food_name = addFood.food_name;
       }
@@ -157,16 +171,51 @@ async function addPotluck(potluck) {
   } else {
     newPotluckResult = {
       ...newPotluckResult,
-      food: []
-    }
+      food: [],
+    };
     await addInvites();
-  } 
+  }
   return newPotluckResult;
 }
+
+async function organizerEditPotluck(info) {
+  // client must send data with format:
+  // {
+  //   ...potluck_info,
+  //   food: [...food],
+  //   invites: [...invites]
+  // }
+  // overwrite all potluck info
+  // for food, compare new array with old array
+  // for new items in new array, insert into potluck_food_users. If completely new food, also insert into foods.
+  // for old items not in new array, remove from potluck_food_users
+  //
+  // for invites, compare new array with old array
+  // for new users in new array, insert into potluck_invites
+  // for old users not in new array, remove from potluck_invites
+}
+
+async function organizerDeletePotluck() {}
+
+async function guestUpdateFood(info) {
+  // client sends potluck_id, food_id, user_id
+  // if an x is clicked, then client sends potluck_id, food_id, user_id = null
+  // updates the potluck_food_users table
+}
+
+async function guestRSVP(response) {}
+
+async function addFood(food) {}
 
 module.exports = {
   getUserPotlucks,
   getUserInvites,
-  getPotluckFood,
+  findPotluckById,
+  getPotluck,
   addPotluck,
+  guestUpdateFood,
+  organizerEditPotluck,
+  guestRSVP,
+  addFood,
+  organizerDeletePotluck,
 };

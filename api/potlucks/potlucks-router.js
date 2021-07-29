@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const Potluck = require("./potlucks-model");
+const { checkPotluckExists } = require('../middleware/middleware');
 
 router.post("/", async (req, res, next) => {
   
@@ -84,9 +85,9 @@ router.get("/invites", async (req, res, next) => {
 //   }
 // })
 
-router.get("/:potluck_id/food", async (req, res, next) => {
+router.get("/:potluck_id", checkPotluckExists, async (req, res, next) => {
   try {
-    const potluck = await Potluck.getPotluckFood(req.params.potluck_id);
+    const potluck = await Potluck.getPotluck(req.params.potluck_id);
     res.status(200).json(potluck);
   } catch (err) {
     next(err);
