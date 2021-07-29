@@ -29,13 +29,11 @@ function getUserInvites(user_id) {
 }
 
 async function findPotluckById(potluck_id) {
-  const potluck = await db('potlucks')
-    .where('potluck_id', potluck_id)
+  const potluck = await db("potlucks").where("potluck_id", potluck_id);
   return potluck;
 }
 
 async function getPotluck(potluck_id) {
-
   const foodRows = await db("potlucks as p")
     .join("users as u", "p.organizer_id", "u.user_id")
     .leftJoin("potluck_food_users as pfu", "pfu.potluck_id", "p.potluck_id")
@@ -67,7 +65,7 @@ async function getPotluck(potluck_id) {
     organizer_id: potluck.organizer_id,
     organizer: potluck.organizer,
     food: [],
-    invites: []
+    invites: [],
   };
   foodRows.forEach((el) => {
     if (el.food_id) {
@@ -76,14 +74,14 @@ async function getPotluck(potluck_id) {
         food_name: el.food_name,
         user_id: el.user_id,
         username: el.username,
-      });  
+      });
     }
   });
 
-  const guests = await db('potluck_invites as pu')
-    .join('users as u', 'pu.user_id', 'u.user_id')
-    .select('pu.user_id', 'u.username', 'pu.attending')
-    .where('pu.potluck_id', potluck_id);
+  const guests = await db("potluck_invites as pu")
+    .join("users as u", "pu.user_id", "u.user_id")
+    .select("pu.user_id", "u.username", "pu.attending")
+    .where("pu.potluck_id", potluck_id);
   result.invites = guests;
 
   return result;
@@ -195,12 +193,9 @@ async function organizerEditPotluck(info) {
   // for invites, compare new array with old array
   // for new users in new array, insert into potluck_invites
   // for old users not in new array, remove from potluck_invites
-
 }
 
-async function organizerDeletePotluck() {
-
-}
+async function organizerDeletePotluck() {}
 
 async function guestUpdateFood(info) {
   // client sends potluck_id, food_id, user_id
@@ -208,13 +203,9 @@ async function guestUpdateFood(info) {
   // updates the potluck_food_users table
 }
 
-async function guestRSVP(response) {
+async function guestRSVP(response) {}
 
-}
-
-async function addFood(food) {
-
-}
+async function addFood(food) {}
 
 module.exports = {
   getUserPotlucks,
@@ -226,5 +217,5 @@ module.exports = {
   organizerEditPotluck,
   guestRSVP,
   addFood,
-  organizerDeletePotluck
+  organizerDeletePotluck,
 };
