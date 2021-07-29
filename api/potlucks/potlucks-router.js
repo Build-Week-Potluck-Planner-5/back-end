@@ -59,6 +59,7 @@ router.put('/invites/:invite_id', async (req, res, next) => {
 })
 
 router.put('/:potluck_id/:food_id', async (req, res, next) => {
+  console.log('decoded token', req.decodedJWT);
   const { subject } = req.decodedJWT;
   try {
     const potluck = await Potluck.guestUpdateFood(req.params.potluck_id, req.params.food_id, subject);
