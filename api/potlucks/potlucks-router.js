@@ -16,39 +16,24 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.get("/", async (req, res, next) => {
-  const { subject } = req.decodedJWT;
+router.get("/foods", async (req, res, next) => {
   try {
-    const potlucks = await Potluck.getUserPotlucks(subject);
-    res.status(200).json(potlucks);
+    const foodList = await Potluck.getAllFoods();
+    res.status(200).json(foodList);
   } catch (err) {
     next(err);
   }
 });
 
-// router.put('/' async (req, res, next) => {
-//   try {
-
-//   } catch (err) {
-//     next(err);
-//   }
-// })
-
-// router.delete('/' async (req, res, next) => {
-//   try {
-
-//   } catch (err) {
-//     next(err);
-//   }
-// })
-
-// router.post('/' async (req, res, next) => {
-//   try {
-
-//   } catch (err) {
-//     next(err);
-//   }
-// })
+router.get("/", async (req, res, next) => {
+  const { subject } = req.decodedJWT;
+  try {
+    const potlucks = await Potluck.getGuestPotlucks(subject);
+    res.status(200).json(potlucks);
+  } catch (err) {
+    next(err);
+  }
+});
 
 router.get("/invites", async (req, res, next) => {
   const { subject } = req.decodedJWT;
@@ -60,30 +45,6 @@ router.get("/invites", async (req, res, next) => {
   }
 });
 
-// router.put('/' async (req, res, next) => {
-//   try {
-
-//   } catch (err) {
-//     next(err);
-//   }
-// })
-
-// router.delete('/' async (req, res, next) => {
-//   try {
-
-//   } catch (err) {
-//     next(err);
-//   }
-// })
-
-// router.post('/' async (req, res, next) => {
-//   try {
-
-//   } catch (err) {
-//     next(err);
-//   }
-// })
-
 router.get("/:potluck_id", checkPotluckExists, async (req, res, next) => {
   try {
     const potluck = await Potluck.getPotluck(req.params.potluck_id);
@@ -93,29 +54,8 @@ router.get("/:potluck_id", checkPotluckExists, async (req, res, next) => {
   }
 });
 
-// router.put('/' async (req, res, next) => {
-//   try {
+router.put('/invites/:invite_id', async (req, res, next) => {
 
-//   } catch (err) {
-//     next(err);
-//   }
-// })
-
-// router.delete('/' async (req, res, next) => {
-//   try {
-
-//   } catch (err) {
-//     next(err);
-//   }
-// })
-
-router.get("/foods", async (req, res, next) => {
-  try {
-    const foodList = await Potluck.getAllFoods();
-    res.status(200).json(foodList);
-  } catch (err) {
-    next(err);
-  }
-}); 
+})
 
 module.exports = router;

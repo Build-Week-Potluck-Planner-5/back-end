@@ -1,6 +1,7 @@
 const db = require("../data/db-config");
 
-function getUserPotlucks(user_id) {
+function getGuestPotlucks(user_id) {
+  console.log('inside getUserPotlucks model function')
   return db("potlucks as p")
     .join("potluck_invites as pi", "p.potluck_id", "pi.potluck_id")
     .join("users as u", "p.organizer_id", "u.user_id")
@@ -8,7 +9,8 @@ function getUserPotlucks(user_id) {
       "p.potluck_name",
       "p.potluck_date",
       "p.potluck_time",
-      "u.username as organizer"
+      "u.username as organizer",
+      "pi.potluck_invite_id"
     )
     .where("pi.user_id", user_id)
     .andWhere("pi.attending", true);
@@ -19,6 +21,7 @@ function getUserInvites(user_id) {
     .join("potluck_invites as pi", "p.potluck_id", "pi.potluck_id")
     .join("users as u", "p.organizer_id", "u.user_id")
     .select(
+      "p.potluck_invite_id",
       "p.potluck_name",
       "p.potluck_date",
       "p.potluck_time",
@@ -212,7 +215,7 @@ function getAllFoods() {
 }
 
 module.exports = {
-  getUserPotlucks,
+  getGuestPotlucks,
   getUserInvites,
   findPotluckById,
   getPotluck,
