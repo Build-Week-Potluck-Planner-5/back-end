@@ -1,7 +1,7 @@
 const db = require("../data/db-config");
 
 function getGuestPotlucks(user_id) {
-  console.log('inside getUserPotlucks model function')
+  console.log("inside getUserPotlucks model function");
   return db("potlucks as p")
     .join("potluck_invites as pi", "p.potluck_id", "pi.potluck_id")
     .join("users as u", "p.organizer_id", "u.user_id")
@@ -200,7 +200,12 @@ async function organizerEditPotluck(info) {
 
 async function organizerDeletePotluck() {}
 
-async function guestUpdateFood(info) {
+async function guestUpdateFood(potluck_id, food_id, user_id) {
+  const updatedPotluck = await db("potluck_food_users")
+    .where("potluck_id", potluck_id)
+    .andWhere('food_id', food_id)
+    .update("user_id", user_id);
+  return updatedPotluck;
   // client sends potluck_id, food_id, user_id
   // if an x is clicked, then client sends potluck_id, food_id, user_id = null
   // updates the potluck_food_users table

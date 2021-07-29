@@ -58,4 +58,14 @@ router.put('/invites/:invite_id', async (req, res, next) => {
 
 })
 
+router.put('/:potluck_id/:food_id', async (req, res, next) => {
+  const { subject } = req.decodedJWT;
+  try {
+    const potluck = await Potluck.guestUpdateFood(req.params.potluck_id, req.params.food_id, subject);
+    res.status(200).json(potluck);
+  } catch (err) {
+    next(err);
+  }
+})
+
 module.exports = router;
