@@ -4,7 +4,7 @@ const cors = require("cors");
 const { restricted } = require('./middleware/middleware');
 
 const authRouter = require("./auth/auth-router");
-// const usersRouter = require("./users/users-router");
+const usersRouter = require("./users/users-router");
 const potlucksRouter = require("./potlucks/potlucks-router");
 
 const server = express();
@@ -13,7 +13,7 @@ server.use(helmet());
 server.use(cors());
 
 server.use("/api/auth", authRouter);
-// server.use("/api/users", usersRouter);
+server.use("/api/users", usersRouter);
 server.use("/api/potlucks", restricted, potlucksRouter);
 
 server.use("*", (req, res, next) => { //eslint-disable-line
