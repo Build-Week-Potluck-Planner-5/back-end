@@ -1,7 +1,18 @@
-async function insertUser(user) {
-    // WITH POSTGRES WE CAN PASS A "RETURNING ARRAY" AS 2ND ARGUMENT TO knex.insert/update
-    // AND OBTAIN WHATEVER COLUMNS WE NEED FROM THE NEWLY CREATED/UPDATED RECORD
-    // UNLIKE SQLITE WHICH FORCES US DO DO A 2ND DB CALL
-    const [newUserObject] = await db('users').insert(user, ['user_id', 'username', 'password'])
-    return newUserObject // { user_id: 7, username: 'foo', password: 'xxxxxxx' }
+const router = require('express').Router()
+const Users = require('./users-model')
+
+router.get('/', async (req, res, next) => {
+  try {
+    const users = await Users.get()
+    if(!users) {
+      next({status: 404, message: 'no users found'})
+    } else {
+      res.json(users)
+    }
+  } catch(err) {
+    next(err)
   }
+})
+
+
+module.exports = router
