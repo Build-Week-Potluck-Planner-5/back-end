@@ -18,7 +18,7 @@ server.use("/api/potlucks", restricted, potlucksRouter);
 
 server.use("*", (req, res, next) => { //eslint-disable-line
   res.status(404).json({
-    message: "not found, sorry!",
+    message: "page not found, sorry!",
   });
 });
 
