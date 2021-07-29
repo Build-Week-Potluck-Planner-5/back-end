@@ -69,14 +69,15 @@ async function getPotluck(potluck_id) {
     food: [],
     invites: []
   };
-
   foodRows.forEach((el) => {
-    result.food.push({
-      food_id: el.food_id,
-      food_name: el.food_name,
-      user_id: el.user_id,
-      username: el.username,
-    });  
+    if (el.food_id) {
+      result.food.push({
+        food_id: el.food_id,
+        food_name: el.food_name,
+        user_id: el.user_id,
+        username: el.username,
+      });  
+    }
   });
 
   const guests = await db('potluck_invites as pu')
