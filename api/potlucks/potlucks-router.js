@@ -54,4 +54,8 @@ router.get("/:potluck_id", checkPotluckExists, async (req, res, next) => {
   }
 });
 
+router.put('/invites/:invite_id', async (req, res, next) => {
+
+})
+
 module.exports = router;
