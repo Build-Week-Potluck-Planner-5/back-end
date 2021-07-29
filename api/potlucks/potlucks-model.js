@@ -207,6 +207,10 @@ async function guestRSVP(response) {}
 
 async function addFood(food) {}
 
+function getAllFoods() {
+  return db("foods").select("food_name");
+}
+
 module.exports = {
   getUserPotlucks,
   getUserInvites,
@@ -218,4 +222,5 @@ module.exports = {
   guestRSVP,
   addFood,
   organizerDeletePotluck,
+  getAllFoods,
 };
