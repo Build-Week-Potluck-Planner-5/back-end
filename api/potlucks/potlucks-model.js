@@ -92,6 +92,32 @@ async function addPotluck(potluck) {
   ]);
   let newPotluckResult = newPotluck;
   let foodInsert = [];
+  let inviteInsert = [];
+
+  const addInvites = async () => {
+    if (potluck.invites.length > 0) {
+      for (const user of potluck.invites) {
+        const [findUser] = await db("users").where("user_id", user);
+  
+        await db("potluck_invites").insert(
+          { potluck_id: newPotluck.potluck_id, user_id: findUser.user_id },
+          ["potluck_id", "user_id"]
+        );
+  
+        inviteInsert.push(findUser.username);
+      }
+      newPotluckResult = {
+        ...newPotluckResult,
+        invites: inviteInsert,
+      };
+      console.log('look here')
+    } else {
+      newPotluckResult = {
+        ...newPotluckResult,
+        invites: []
+      }
+    }
+  }
 
   if (potluck.food.length > 0) {
     for (const el of potluck.food) {
@@ -126,7 +152,15 @@ async function addPotluck(potluck) {
       ...newPotluckResult,
       food: foodInsert,
     };
-  }
+    await addInvites();
+    console.log(newPotluckResult);
+  } else {
+    newPotluckResult = {
+      ...newPotluckResult,
+      food: []
+    }
+    await addInvites();
+  } 
   return newPotluckResult;
 }
 
