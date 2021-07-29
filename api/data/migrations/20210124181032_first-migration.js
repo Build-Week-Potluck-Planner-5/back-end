@@ -13,6 +13,7 @@ exports.up = async (knex) => {
       table.string("potluck_name", 200).notNullable();
       table.string("potluck_date").notNullable();
       table.string("potluck_time").notNullable();
+      table.string('potluck_location').notNullable();
       table
         .integer("organizer_id")
         .unsigned()
