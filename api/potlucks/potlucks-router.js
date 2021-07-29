@@ -84,9 +84,9 @@ router.get("/invites", async (req, res, next) => {
 //   }
 // })
 
-router.get("/:potluck_id/food", async (req, res, next) => {
+router.get("/:potluck_id", async (req, res, next) => {
   try {
-    const potluck = await Potluck.getPotluckFood(req.params.potluck_id);
+    const potluck = await Potluck.getPotluck(req.params.potluck_id);
     res.status(200).json(potluck);
   } catch (err) {
     next(err);
