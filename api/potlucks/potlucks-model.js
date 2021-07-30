@@ -8,7 +8,10 @@ function getGuestPotlucks(user_id) {
       "p.potluck_name",
       "p.potluck_date",
       "p.potluck_time",
+      "p.organizer_id",
       "u.username as organizer",
+      "pi.rsvp",
+      "pi.attending",
       "pi.potluck_invite_id"
     )
     .where("pi.user_id", user_id)
