@@ -54,8 +54,6 @@ router.get("/:potluck_id", checkPotluckExists, async (req, res, next) => {
   }
 });
 
-router.put("/invites/:invite_id", async (req, res, next) => {});
-
 router.put("/:potluck_id/:food_id/assign", async (req, res, next) => {
   console.log("decoded token", req.decodedJWT);
   const { subject } = req.decodedJWT;

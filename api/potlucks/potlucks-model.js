@@ -20,14 +20,17 @@ function getUserInvites(user_id) {
     .join("potluck_invites as pi", "p.potluck_id", "pi.potluck_id")
     .join("users as u", "p.organizer_id", "u.user_id")
     .select(
-      "p.potluck_invite_id",
+      "pi.potluck_invite_id",
+      "p.potluck_id",
       "p.potluck_name",
       "p.potluck_date",
       "p.potluck_time",
-      "u.username as organizer"
+      "u.username as organizer",
+      "pi.rsvp"
     )
     .where("pi.user_id", user_id)
-    .andWhere("pi.attending", false);
+    .andWhere("pi.attending", false)
+    .andWhere("pi.rsvp", false);
 }
 
 async function findPotluckById(potluck_id) {
@@ -39,7 +42,7 @@ async function findInvite(invite_info) {
   const [invite] = await db("potluck_invites")
     .where("potluck_id", invite_info.potluck_id)
     .andWhere("user_id", invite_info.user_id)
-    .select("potluck_invite_id", "potluck_id", "user_id", "attending");
+    .select("potluck_invite_id", "potluck_id", "user_id", "attending", "rsvp");
   return invite;
 }
 
@@ -205,7 +208,7 @@ async function guestRSVP(inviteInfo) {
   await db("potluck_invites")
     .where("potluck_id", inviteInfo.potluck_id)
     .andWhere("user_id", inviteInfo.user_id)
-    .update("attending", inviteInfo.attending);
+    .update({ attending: inviteInfo.attending, rsvp: true });
   const updatedInvite = await findInvite(inviteInfo);
   return updatedInvite;
 }
