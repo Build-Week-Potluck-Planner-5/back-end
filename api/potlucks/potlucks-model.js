@@ -1,7 +1,6 @@
 const db = require("../data/db-config");
 
 function getGuestPotlucks(user_id) {
-  console.log("inside getUserPotlucks model function");
   return db("potlucks as p")
     .join("potluck_invites as pi", "p.potluck_id", "pi.potluck_id")
     .join("users as u", "p.organizer_id", "u.user_id")
@@ -34,6 +33,14 @@ function getUserInvites(user_id) {
 async function findPotluckById(potluck_id) {
   const potluck = await db("potlucks").where("potluck_id", potluck_id);
   return potluck;
+}
+
+async function findInvite(invite_info) {
+  const [invite] = await db("potluck_invites")
+    .where("potluck_id", invite_info.potluck_id)
+    .andWhere("user_id", invite_info.user_id)
+    .select("potluck_invite_id", "potluck_id", "user_id", "attending");
+  return invite;
 }
 
 async function getPotluck(potluck_id) {
@@ -120,14 +127,12 @@ async function addPotluck(potluck) {
           { potluck_id: newPotluck.potluck_id, user_id: findUser.user_id },
           ["potluck_id", "user_id"]
         );
-
         inviteInsert.push(findUser.username);
       }
       newPotluckResult = {
         ...newPotluckResult,
         invites: inviteInsert,
       };
-      console.log("look here");
     } else {
       newPotluckResult = {
         ...newPotluckResult,
@@ -170,7 +175,6 @@ async function addPotluck(potluck) {
       food: foodInsert,
     };
     await addInvites();
-    console.log(newPotluckResult);
   } else {
     newPotluckResult = {
       ...newPotluckResult,
@@ -179,6 +183,31 @@ async function addPotluck(potluck) {
     await addInvites();
   }
   return newPotluckResult;
+}
+
+async function guestUpdateFood(potluck_id, food_id, user_id) {
+  const updatedPotluck = await db("potluck_food_users")
+    .where("potluck_id", potluck_id)
+    .andWhere("food_id", food_id)
+    .update("user_id", user_id);
+  return updatedPotluck;
+}
+
+async function guestCancelFood(potluck_id, food_id) {
+  const updatedPotluck = await db("potluck_food_users")
+    .where("potluck_id", potluck_id)
+    .andWhere("food_id", food_id)
+    .update("user_id", null);
+  return updatedPotluck;
+}
+
+async function guestRSVP(inviteInfo) {
+  await db("potluck_invites")
+    .where("potluck_id", inviteInfo.potluck_id)
+    .andWhere("user_id", inviteInfo.user_id)
+    .update("attending", inviteInfo.attending);
+  const updatedInvite = await findInvite(inviteInfo);
+  return updatedInvite;
 }
 
 async function organizerEditPotluck(info) {
@@ -200,24 +229,6 @@ async function organizerEditPotluck(info) {
 
 async function organizerDeletePotluck() {}
 
-async function guestUpdateFood(potluck_id, food_id, user_id) {
-  const updatedPotluck = await db("potluck_food_users")
-    .where("potluck_id", potluck_id)
-    .andWhere("food_id", food_id)
-    .update("user_id", user_id);
-  return updatedPotluck;
-}
-
-async function guestCancelFood(potluck_id, food_id) {
-  const updatedPotluck = await db("potluck_food_users")
-    .where("potluck_id", potluck_id)
-    .andWhere("food_id", food_id)
-    .update("user_id", null);
-  return updatedPotluck;
-}
-
-async function guestRSVP(response) {}
-
 async function addFood(food) {}
 
 function getAllFoods() {
@@ -237,4 +248,5 @@ module.exports = {
   organizerDeletePotluck,
   getAllFoods,
   guestCancelFood,
+  findInvite,
 };

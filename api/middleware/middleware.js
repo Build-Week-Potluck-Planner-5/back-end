@@ -1,5 +1,5 @@
 const User = require("../users/users-model");
-const Potluck = require('../potlucks/potlucks-model');
+const Potluck = require("../potlucks/potlucks-model");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../secrets");
 
@@ -38,10 +38,9 @@ const checkPotluckExists = async (req, res, next) => {
     next({
       status: 401,
       message: "potluck not found",
-    })
+    });
   }
-
-}
+};
 
 const checkRequiredFields = async (req, res, next) => {
   const { username, password } = req.body;
@@ -78,9 +77,30 @@ const restricted = (req, res, next) => {
   }
 };
 
+const checkInvite = async (req, res, next) => {
+  const { subject } = req.decodedJWT;
+  const { potluck_id } = req.params;
+  const inviteInfo = {
+    attending: req.body.attending,
+    user_id: subject,
+    potluck_id: potluck_id,
+  };
+  const findInvite = await Potluck.findInvite(inviteInfo);
+  if (findInvite) {
+    req.inviteInfo = inviteInfo;
+    next();
+  } else {
+    next({
+      status: 401,
+      message: "invite not found",
+    });
+  }
+};
+
 module.exports = {
   checkUsernameExists,
   checkPotluckExists,
   checkRequiredFields,
   restricted,
+  checkInvite,
 };
