@@ -26,6 +26,8 @@ router.post("/login", checkRequiredFields, checkUsernameExists, async (req, res,
       const token = tokenBuilder(user);
       res.status(200).json({
           message: `welcome, ${user.username}`,
+          user_id: user.user_id,
+          username: user.username,
           token,
       });
   } else {
