@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const Potluck = require("./potlucks-model");
-const { checkPotluckExists } = require("../middleware/middleware");
+const { checkPotluckExists, checkInvite } = require("../middleware/middleware");
 
 router.post("/", async (req, res, next) => {
   const potluck = {
@@ -78,6 +78,16 @@ router.put("/:potluck_id/:food_id/cancel", async (req, res, next) => {
       req.params.food_id
     );
     res.status(200).json(potluck);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.put("/:potluck_id/rsvp", checkPotluckExists, checkInvite, async (req, res, next) => {
+  const { inviteInfo } = req;
+  try {
+    const updatedInvite = await Potluck.guestRSVP(inviteInfo);
+    res.status(200).json(updatedInvite);
   } catch (err) {
     next(err);
   }
