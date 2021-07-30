@@ -5,6 +5,7 @@ function getGuestPotlucks(user_id) {
     .join("potluck_invites as pi", "p.potluck_id", "pi.potluck_id")
     .join("users as u", "p.organizer_id", "u.user_id")
     .select(
+      "p.potluck_id",
       "p.potluck_name",
       "p.potluck_date",
       "p.potluck_time",
