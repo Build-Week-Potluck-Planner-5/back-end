@@ -54,19 +54,33 @@ router.get("/:potluck_id", checkPotluckExists, async (req, res, next) => {
   }
 });
 
-router.put('/invites/:invite_id', async (req, res, next) => {
+router.put("/invites/:invite_id", async (req, res, next) => {});
 
-})
-
-router.put('/:potluck_id/:food_id', async (req, res, next) => {
-  console.log('decoded token', req.decodedJWT);
+router.put("/:potluck_id/:food_id/assign", async (req, res, next) => {
+  console.log("decoded token", req.decodedJWT);
   const { subject } = req.decodedJWT;
   try {
-    const potluck = await Potluck.guestUpdateFood(req.params.potluck_id, req.params.food_id, subject);
+    const potluck = await Potluck.guestUpdateFood(
+      req.params.potluck_id,
+      req.params.food_id,
+      subject
+    );
     res.status(200).json(potluck);
   } catch (err) {
     next(err);
   }
-})
+});
+
+router.put("/:potluck_id/:food_id/cancel", async (req, res, next) => {
+  try {
+    const potluck = await Potluck.guestCancelFood(
+      req.params.potluck_id,
+      req.params.food_id
+    );
+    res.status(200).json(potluck);
+  } catch (err) {
+    next(err);
+  }
+});
 
 module.exports = router;

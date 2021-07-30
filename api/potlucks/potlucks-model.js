@@ -203,12 +203,17 @@ async function organizerDeletePotluck() {}
 async function guestUpdateFood(potluck_id, food_id, user_id) {
   const updatedPotluck = await db("potluck_food_users")
     .where("potluck_id", potluck_id)
-    .andWhere('food_id', food_id)
+    .andWhere("food_id", food_id)
     .update("user_id", user_id);
   return updatedPotluck;
-  // client sends potluck_id, food_id, user_id
-  // if an x is clicked, then client sends potluck_id, food_id, user_id = null
-  // updates the potluck_food_users table
+}
+
+async function guestCancelFood(potluck_id, food_id) {
+  const updatedPotluck = await db("potluck_food_users")
+    .where("potluck_id", potluck_id)
+    .andWhere("food_id", food_id)
+    .update("user_id", null);
+  return updatedPotluck;
 }
 
 async function guestRSVP(response) {}
@@ -231,4 +236,5 @@ module.exports = {
   addFood,
   organizerDeletePotluck,
   getAllFoods,
+  guestCancelFood,
 };
